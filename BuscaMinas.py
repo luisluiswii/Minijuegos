@@ -1,12 +1,17 @@
 # 3 dificultades 6x6 (6) / 12x12 (50) / 26x26 (200)
+# total de casillas 1. 36(30) 2. 144(94) 3. 676 (476)
+
 import random
 
 seguir = True
 minas = 0
 columna = 0
 tablero = []
+tablero_mostrar = []
+victoria = 0
 
 
+# Muestra el tablero descuebirto
 def print_tablero(tablero):
     for fila in tablero:
         for elemento in fila:
@@ -14,23 +19,38 @@ def print_tablero(tablero):
         print()
 
 
-def tablero_base():
+# Muestra el tablero con el que se juega
+def tablero_base(tablero_mostrar):
     print("    ", end="")
 
     # Imprimir letras de columnas
     for i in range(columna):
-        print(chr(65 + i), end=" ")
+        print(chr(65 + i), end="  ")
     print()
 
-    # Imprimir filas con números y casillas vacías
-    for i in range(1, columna + 1):
-        if i < 10:
-            print(i, end="  ")
+    # Imprimir filas con números y el contenido de la matriz
+    for i in range(columna):
+        if i + 1 < 10:
+            print(i + 1, end="  ")
         else:
-            print(i, end=" ")
-        print("⬛️" * columna)
+            print(i + 1, end=" ")
+
+        # Mostrar la fila i de la matriz tablero_mostrar
+        for j in range(columna):
+            print(tablero_mostrar[i][j], end=" ")
+        print()
 
 
+# Crea el trablero oculto por primera vez
+def crear_tablero_cuadrados(tablero_mostrar, columna):
+    for i in range(columna):
+        fila = ["⬛️" for _ in range(columna)]
+        tablero_mostrar.append(fila)
+
+    return tablero_mostrar
+
+
+# Rellena el tablero con las minas y el resto 0
 def crear_tablero(minas, columna):
     tablero_local = []
     # Primero creamos el tablero con ceros
@@ -53,6 +73,7 @@ def crear_tablero(minas, columna):
     return tablero_local
 
 
+# Actualiza el tablero respecto a las minas
 def comprobar_minas(tablero, columna):
     # si la mina es x e y necesitamos sumar alrededor
     for i in range(columna):
@@ -93,13 +114,16 @@ def comprobar_minas(tablero, columna):
                     tablero[i+1][j+1] += 1
 
 
-def preguntar_coordenada(tablero, no_ganar):
+# Pregunta al usuario que coordenada pulsar y comprueba si hay mina
+def preguntar_coordenada(tablero, tablero_mostrar, tablero_victoria):
+    tamaño = len(tablero)
+
     coordenada_input = input("Introduce las Coordenadas (Letra/Número): ")
 
     if len(coordenada_input) >= 2:
         # Tomar la primera letra como columna
         letra = coordenada_input[0].upper()
-        numero = coordenada_input[1:]
+        numero_str = coordenada_input[1:]
 
         if letra == "A":
             indice_columna = 0
@@ -155,13 +179,44 @@ def preguntar_coordenada(tablero, no_ganar):
             indice_columna = 25
         else:
             print("Letra no válida")
+            return True
 
-        if tablero[indice_columna, numero] == "*":
-            no_ganar = False
-            print("Has perdido")
-            print_tablero(tablero)
+        # Verificar que numero_str es un número
+        if not numero_str.isdigit():
+            print("Número no válido")
+            return True
+
+        indice_fila = int(numero_str) - 1
+
+        if 0 <= indice_fila < tamaño and 0 <= indice_columna < tamaño:
+            return comprobar(indice_fila, indice_columna, tablero, tablero_mostrar, tablero_victoria)
+        else:
+            print(
+                f"Coordenadas fuera de rango. Tamaño máximo: {tamaño}x{tamaño}")
+            return True
     else:
         print("Error de coordenada")
+        return True
+
+
+# Mediante las coordenadas comprueba si hay mina, si no actualiza el tablero que se muestra
+def comprobar(indice_fila, indice_columna, tablero, tablero_mostrar, tablero_victoria):
+    global victoria
+
+    if tablero[indice_fila][indice_columna] == "*":
+        print("Has perdido")
+        print_tablero(tablero)
+        return False
+    else:
+        tablero_mostrar[indice_fila][indice_columna] = tablero[indice_fila][indice_columna]
+        victoria += 1
+
+        if victoria == tablero_victoria:
+            print("Has ganado")
+            return False
+
+        tablero_base(tablero_mostrar)
+        return True
 
 
 while (seguir):
@@ -184,31 +239,49 @@ while (seguir):
             minas = 6
             columna = 6
             no_ganado = True
+            tablero_victoria = 30
+            victoria = 0
 
+            tablero_mostrar = crear_tablero_cuadrados(tablero_mostrar, columna)
             tablero = crear_tablero(minas, columna)
             comprobar_minas(tablero, columna)
-            tablero_base()
+            tablero_base(tablero_mostrar)
 
             while no_ganado:
-                preguntar_coordenada(no_ganado)
+                no_ganado = preguntar_coordenada(
+                    tablero, tablero_mostrar, tablero_victoria)
 
         case 2:
             minas = 50
             columna = 12
+            no_ganado = True
+            tablero_victoria = 94
+            victoria = 0
 
+            tablero_mostrar = crear_tablero_cuadrados(tablero_mostrar, columna)
             tablero = crear_tablero(minas, columna)
             comprobar_minas(tablero, columna)
-            tablero_base()
-            # print_tablero(tablero)
+            tablero_base(tablero_mostrar)
+
+            while no_ganado:
+                no_ganado = preguntar_coordenada(
+                    tablero, tablero_mostrar, tablero_victoria)
 
         case 3:
             minas = 200
             columna = 26
+            no_ganado = True
+            tablero_victoria = 476
+            victoria = 0
 
+            tablero_mostrar = crear_tablero_cuadrados(tablero_mostrar, columna)
             tablero = crear_tablero(minas, columna)
             comprobar_minas(tablero, columna)
-            # print_tablero(tablero)
-            tablero_base()
+            tablero_base(tablero_mostrar)
+
+            while no_ganado:
+                no_ganado = preguntar_coordenada(
+                    tablero, tablero_mostrar, tablero_victoria)
 
         case 4:
             print("Saliendo del programa...")
