@@ -142,3 +142,60 @@ def obtener_entrada_valida(tamaño, mensaje):
         except ValueError:
             # Captura error si el usuario ingresa algo que no es un número entero
             print("Error: Debes ingresar un número entero. Intenta de nuevo.")
+
+def jugar_barquitos(tamaño):
+    """
+    Función principal que ejecuta el juego de los barquitos (Hundir la flota/Battleship).
+    
+    Parámetros:
+    - tamaño: dimensión del tablero (tamaño x tamaño)
+    """
+    
+    # 1. CREACIÓN DEL TABLERO DEL USUARIO (JUGADOR)
+    # Crea un tablero vacío para el usuario con las dimensiones especificadas
+    tablero_usuario = crear_tablero(tamaño, tamaño)
+    
+    # Añade barcos aleatoriamente al tablero del usuario
+    añadir_barcos(tablero_usuario)
+    
+    # 2. CREACIÓN DEL TABLERO DE JUEGO DEL USUARIO
+    # Este tablero muestra solo los disparos realizados por el usuario
+    # Inicialmente está vacío (todo con "-"), representa lo que el usuario ve del oponente
+    tablero_usuario_juego = crear_tablero(tamaño, tamaño, "-")
+    
+    # 3. CREACIÓN DEL TABLERO DE LA INTELIGENCIA ARTIFICIAL (IA)
+    # Crea un tablero vacío para la IA con las mismas dimensiones
+    tablero_ia = crear_tablero(tamaño, tamaño)
+    
+    # Añade barcos aleatoriamente al tablero de la IA
+    añadir_barcos(tablero_ia)
+    
+    # 4. BUCLE PRINCIPAL DEL JUEGO
+    # El juego continúa mientras ambos jugadores tengan barcos sin hundir
+    while condicion_victoria(tablero_usuario) is False and condicion_victoria(tablero_ia) is False:
+        """
+        Condición del bucle:
+        - condicion_victoria(tablero_usuario) = False → El usuario aún tiene barcos
+        - condicion_victoria(tablero_ia) = False → La IA aún tiene barcos
+        - El bucle se ejecuta mientras AMBOS sigan teniendo barcos
+        - El juego termina cuando UNO de los dos ya no tiene barcos
+        """
+        
+        # 5. MOSTRAR INFORMACIÓN AL USUARIO
+        
+        # a) Mostrar el tablero del usuario (con sus barcos y los disparos recibidos)
+        print("Tu tablero de juego :\n")
+        imprimir_tablero(tablero_usuario)
+        # Muestra: barcos propios ('1'), impactos recibidos ('X'), agua recibida ('O')
+        
+        # b) Mostrar el tablero de ataque del usuario
+        print("Tablero de juego del ataque :\n")
+        imprimir_tablero(tablero_usuario_juego)
+        # Muestra: disparos realizados contra la IA ('X', 'O', '-')
+        # No muestra los barcos de la IA, solo los resultados de los disparos
+        
+        # NOTA: El código continúa aquí (se omitió parte posterior del bucle)
+        # Normalmente aquí seguiría:
+        # 1. Turno del usuario para atacar
+        # 2. Turno de la IA para atacar
+        # 3. Verificar si alguien ganó
