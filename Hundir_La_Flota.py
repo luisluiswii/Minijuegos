@@ -4,7 +4,7 @@ def crear_tablero(filas, columnas, valor_inicial="🌊"):
     return [[valor_inicial for _ in range(columnas)] for _ in range(filas)]
 
 def imprimir_tablero(tablero):
-    """Imprime el tablero durante el juego - AHORA SIMÉTRICO"""
+    """Imprime el tablero durante el juego"""
     tamaño = len(tablero)
     
     # Para emojis, necesitamos 2 caracteres para el contenido + espacios
@@ -29,7 +29,7 @@ def imprimir_tablero(tablero):
             print("+" + "─" * ((ancho_celda - 1) * tamaño) + "+")
 
 def imprimir_tablero_con_coordenadas(tablero):
-    """Imprime el tablero con coordenadas - AHORA SIMÉTRICO Y CUADRADO"""
+    """Imprime el tablero con coordenadas"""
     tamaño = len(tablero)
     
     # Letras para las filas (A, B, C, ...)
